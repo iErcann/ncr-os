@@ -126,7 +126,7 @@ void kernel_main(void)
 	terminal_initialize();
 	
 	for(int i = 0; i < 10; i++) { 
-		terminal_putentryat('i', terminal_color, i, i);
+		terminal_putentryat('i', terminal_color, terminal_column, i);
 		delay(10);
 	}
 
