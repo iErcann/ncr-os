@@ -49,8 +49,8 @@ size_t strlen(const char* str)
 	return len;
 }
  
-static const size_t VGA_WIDTH = 200;
-static const size_t VGA_HEIGHT = 200;
+static const size_t VGA_WIDTH = 80;
+static const size_t VGA_HEIGHT = 25;
  
 size_t terminal_row;
 size_t terminal_column;
@@ -61,7 +61,7 @@ void terminal_initialize(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_BLACK);
 	terminal_buffer = (uint16_t*) 0xB8000;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -85,23 +85,30 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 void terminal_putchar(char c) 
 {
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
+	if (++terminal_column == VGA_WIDTH || c == '\n') {
 		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
+		if (++terminal_row == VGA_HEIGHT) {
 			terminal_row = 0;
+		}
 	}
+	if (c=='\n'){
+		terminal_row++;
+	}
+
 }
  
-void terminal_write(const char* data, size_t size) 
+void terminal_write(const char* data, size_t size, int delayTime) 
 {
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++) {
 		terminal_putchar(data[i]);
+		delay(delayTime);
+	}
 }
 
 
-void terminal_writestring(const char* data) 
+void terminal_writestring(const char* data, int delayTime) 
 {
-	terminal_write(data, strlen(data));
+	terminal_write(data, strlen(data), delayTime);
 }
  
 void delay(int t) {
@@ -121,13 +128,27 @@ void kernel_main(void)
 	terminal_initialize();
 
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Welcome to NcrOS!\n");
+	terminal_writestring("Hello.\nWorld \n !", 50);
+
+
 	/* Initialize terminal interface */
-	terminal_initialize();
-	
-	for(int i = 0; i < 10; i++) { 
-		terminal_putentryat('i', terminal_color, terminal_column, i);
-		delay(10);
+
+
+	const char* test = "Hello.\nWorld \n !";
+
+	int terminal_column=0;
+	for (;;) {  
+		terminal_initialize();
+		terminal_column++;
+		for (unsigned int c = 0; c < strlen(test); c++) {  
+			if (test[c]=='\n'){
+				terminal_row++;
+			}
+			terminal_putentryat(test[c], terminal_color, c+terminal_column, terminal_row);
+		}
+		delay(100);
 	}
+
+
 
 }
