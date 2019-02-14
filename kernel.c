@@ -106,15 +106,18 @@ void terminal_write(const char* data, size_t size, int delayTime)
 }
 
 
-void terminal_writestring(const char* data, int delayTime) 
-{
+void terminal_writestring(const char* data, int delayTime, enum vga_color fg, enum vga_color bg) {
+	uint8_t old_terminal_color = terminal_color;
+	terminal_color = vga_entry_color(fg, bg);
 	terminal_write(data, strlen(data), delayTime);
+	terminal_color = old_terminal_color;
+
 }
  
 void delay(int t) {
 	volatile int i, j;
 	for (int i = 0; i < t; i++) {
-		for (int j = 0; j < 250000; j++) {
+		for (int j = 0; j < 50000; j++) {
 			__asm__("NOP");
 		}
 	}
@@ -128,27 +131,35 @@ void kernel_main(void)
 	terminal_initialize();
 
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello.\nWorld \n !", 50);
+
+	for (size_t x = 0; x < VGA_WIDTH; x++) {
+		terminal_writestring("Welcome to ncr OS\n", 1, x, VGA_COLOR_BLACK);
+	}
+
+
 
 
 	/* Initialize terminal interface */
 
+	// const char* test = "Hello.\nWorld \n !";
 
-	const char* test = "Hello.\nWorld \n !";
 
-	int terminal_column=0;
+ 	char* test = "Davis style->";
+	terminal_column = 0;
+	terminal_row = 0;
+	
 	for (;;) {  
-		terminal_initialize();
+//		terminal_initialize();
 		terminal_column++;
+
 		for (unsigned int c = 0; c < strlen(test); c++) {  
 			if (test[c]=='\n'){
 				terminal_row++;
 			}
 			terminal_putentryat(test[c], terminal_color, c+terminal_column, terminal_row);
 		}
-		delay(100);
+		
+		terminal_putentryat(' ', terminal_color, terminal_column-1, terminal_row);
+		delay(500);
 	}
-
-
-
 }
