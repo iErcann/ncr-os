@@ -1,3 +1,5 @@
+ 
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -38,36 +40,73 @@ void printf(const char* data) {
  
 void kernel_main(void) 
 {
+
+	for (;;) {  
 	/* Initialize terminal interface */
 	terminal_initialize();
 
-	/* Newline support is left as an exercise. */
-	printf("Hey, print function is working. \n Return in line");
-	terminal_writestring("\nThis one is with \n a delay. ", 1000, VGA_COLOR_LIGHT_MAGENTA, VGA_COLOR_BLACK);
-
-	for (size_t x = 0; x < 20; x++) {
-		//terminal_writestring("Welcome to ncr OS\n", 1, x, VGA_COLOR_BLACK);
-    	//terminal_putchar(rand()%10+'0');
+	for (int i = 0; i < 7; i++) {
+		for (int j = 0; j < 80; j++) {
+			terminal_writestring(" ", 0, 0, 	VGA_COLOR_LIGHT_BLUE);
+		}
 	}
+	terminal_column = 0;
+	terminal_row=0;
+	char *buf[] = {"##    ##  ######  ########     #######   ######  \n",
+				   "###   ## ##    ## ##     ##   ##     ## ##    ##\n",
+				   "####  ## ##       ##     ##   ##     ## ##\n",
+				   "## ## ## ##       ########    ##     ##  ######  \n",
+				   "##  #### ##       ##   ##     ##     ##       ##\n",
+				   "##   ### ##    ## ##    ##    ##     ## ##    ## \n"
+				   "##    ##  ######  ##     ##    #######   ###### \n"
+				};
+ 
+ 	for (size_t i = 0; i < 6; i++)
+		terminal_writestring(buf[i], 10, VGA_COLOR_BLACK, VGA_COLOR_LIGHT_BLUE);
+ 
+   
+
+
+	/* Newline support is left as an exercise. */
+	printf("Hey, print function is working. :)\nReturn in line too.");
+	terminal_writestring("\nThis one is with a ", 500, VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	terminal_writestring("delay.", 2500, VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+ 	 	
+
+
     
- // 	char* test = "Davis style->";
+ 	char* test = "Davis style------->";
 	// terminal_column = 0;
 	// terminal_row = 0;
 	
 
 
-// 	for (;;) {  
-// //		terminal_initialize();
-// 		terminal_column++;
+   	for (size_t i = 0; i < 100; i++) {  
+  //		terminal_initialize();
+   		terminal_column++;
 
-// 		for (unsigned int c = 0; c < strlen(test); c++) {  
-// 			if (test[c]=='\n'){
-// 				terminal_row++;
-// 			}
-// 			terminal_putentryat(rand()%10+'0', terminal_color, c+terminal_column, terminal_row);
-// 		}
+ 		for (unsigned int c = 0; c < strlen(test); c++) {  
+ 			if (test[c]=='\n'){
+ 				terminal_row++;
+ 		}
+ 			terminal_putentryat(test[c], VGA_COLOR_RED, c+terminal_column, terminal_row);
+ 		}
 		
-// 		terminal_putentryat(' ', terminal_color, terminal_column-1, terminal_row);
-// 		delay(500);
-// 	}
+ 		terminal_putentryat(' ', terminal_color, terminal_column-1, terminal_row);
+ 		delay(300);
+
+ 	}
+
+ 	printf(" Some not random numbers.");
+ 	for (size_t i = 0; i < 10; i++) {
+ 		terminal_putentryat(rand()%10+'0', i, terminal_column++, terminal_row);
+ 		delay(1000);
+ 	}
+
+ 	for (size_t i = 0; i < 500; i++) {
+		terminal_writestring(" ", rand()%10*10, VGA_COLOR_WHITE, i);
+ 	}
+
+ 	}
+
 }
