@@ -1,6 +1,7 @@
 AS = /home/iercan/Documents/i686/bin/i686-elf-as
 CC = /home/iercan/Documents/i686/bin/i686-elf-gcc
 
+
 main: kernel.c linker.ld boot.s
 	$(AS) boot.s -o boot.o
 	$(CC) -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -pedantic
