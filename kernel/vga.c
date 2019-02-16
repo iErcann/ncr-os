@@ -52,8 +52,8 @@ void terminal_initialize(void)
 }
 
 void terminal_scrollup(){
-
 }
+
 void terminal_setcolor(uint8_t color) 
 {
 	terminal_color = color;
@@ -85,12 +85,13 @@ void terminal_scrolleft() {
 }
 
  
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
-	delay(1);
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
+{
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
- 
+
+ 	
 void terminal_putchar(char c) {
 	if (c!='\n')
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
@@ -99,7 +100,6 @@ void terminal_putchar(char c) {
 		terminal_column = 0;
 		if (++terminal_row >= VGA_HEIGHT) {
 			terminal_scrolldown();
-			terminal_row--;
 			//terminal_row = 0;
 		}
 	}
