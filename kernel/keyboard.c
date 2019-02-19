@@ -14,7 +14,7 @@ Onboard Keyboard Controller
  * 
  * */
  
-#include "io.c"
+ 
  
 static enum PORT {
 	PORT_A = 0x10,
@@ -135,28 +135,49 @@ void k_initialize(){
 		keys[i].port = ports[i];
 	}
 	
-	
+		printfg("Keyboard initialized", VGA_COLOR_GREEN);
+
 	uint8_t ret = 0x0;  
+	enable_cursor(0, 15);
+	update_cursor(5, 5);
 	for (;;){
 		uint8_t currentret = k_readInput();
 		
 		if (currentret != ret){ 
-			const char keyPressed = k_getChar(keys, ports);
-			if (currentret == PORT_ENTER){
-				printfc('\n');
-			
-			} else if (keyPressed != '}') 
-				printfc(  keyPressed  );
+				const char keyPressed = k_getChar(keys, ports);
+				if (currentret == PORT_ENTER){
+					printfc('\n');
+ 
+				} else if (currentret == PORT_SPACE){
+					printfc(' ');	
+				} else if (currentret == PORT_BACKSPACE) {
+					terminal_putentryat(' ', VGA_COLOR_BLACK, terminal_column-1, terminal_row);
+					terminal_column--;
 			 
 
+				} else if(currentret == PORT_LEFT) {
+					terminal_column--;
+ 				} else if(currentret == PORT_RIGHT) {
+					terminal_column++;
+ 				} else if(currentret == PORT_UP) {
+					terminal_row--;
+ 				} else if(currentret == PORT_DOWN) {
+					terminal_row++;
+ 				} 
+ 				
+				else if (keyPressed != '}') {  	 
+					printfc(  keyPressed  );
+				}
+				terminal_updateCursor();
+					
+			}
+			ret = currentret;
 		}
-		ret = currentret;
+ 
+		 
  	}
 	
-	printfg("Keyboard initialized", VGA_COLOR_GREEN);
-}
-
-
-
+    
+ 
 
  

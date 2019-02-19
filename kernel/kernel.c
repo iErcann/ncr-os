@@ -20,6 +20,7 @@ void delay(int t) {
 }
 
 #include "utils.c"
+#include "io.c"
 
 #include "vga.c"
 

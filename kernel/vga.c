@@ -38,13 +38,35 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
+{
+	outportb(0x3D4, 0x0A);
+	outportb(0x3D5, (inportb(0x3D5) & 0xC0) | cursor_start);
  
+	outportb(0x3D4, 0x0B);
+	outportb(0x3D5, (inportb(0x3D5) & 0xE0) | cursor_end);
+}
+
+void update_cursor(int x, int y)
+{
+	uint16_t pos = y * VGA_WIDTH + x;
+ 
+	outportb(0x3D4, 0x0F);
+	outportb(0x3D5, (uint8_t) (pos & 0xFF));
+	outportb(0x3D4, 0x0E);
+	outportb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+void terminal_updateCursor(){
+	update_cursor(terminal_column, terminal_row);
+}
 void terminal_initialize(void) 
 {
 	terminal_row = 0;
 	terminal_column = 0;
 	terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	terminal_buffer = (uint16_t*) 0xB8000;
+	enable_cursor(0, 15);
+	
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
@@ -87,6 +109,7 @@ void terminal_scrolleft() {
  
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
 {
+	update_cursor(x+1, y);
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
@@ -122,3 +145,5 @@ void terminal_writestring(const char* data, int delayTime, enum vga_color fg, en
 	terminal_color = old_terminal_color;
 
 }
+
+ 
