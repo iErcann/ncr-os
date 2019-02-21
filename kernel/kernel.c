@@ -55,8 +55,8 @@ void kernel_main(void) {
 	  };
 
  
-
-	for (size_t i = 0; i < 6; i++) {
+	terminal_row = 7;
+	for (size_t i = 0; i < 0; i++) {
 	 	terminal_writestring(buf[i], 0, VGA_COLOR_LIGHT_GREY, VGA_COLOR_DARK_GREY);	
 	}   
 	

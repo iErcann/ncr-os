@@ -117,7 +117,7 @@ static uint8_t k_readInput(){
 static char k_getChar(Key keys[], uint8_t  ports[]) {
 	 int ind = getIndex(k_readInput(), ports);
 	 if (ind == -1) {
-		 return '}'; // <---- a changer
+		 return '}'; // <---- a changer PEUT ETRE  
 	 }
 	 return keys[ind].name;
 } 
@@ -135,18 +135,44 @@ void k_initialize(){
 		keys[i].port = ports[i];
 	}
 	
-		printfg("Keyboard initialized", VGA_COLOR_GREEN);
-
+	printfg("Keyboard initialized\n", VGA_COLOR_GREEN);
+	printfg("\nanon@anon:", VGA_COLOR_GREEN);
+	printfg(":", VGA_COLOR_WHITE);
+	printfg("~", VGA_COLOR_LIGHT_BLUE);
+	printfg("$ ", VGA_COLOR_WHITE);
+	
+	
+	char line[80] = {'a'};
+	size_t lineI = 0;
+	int vim = 0;
 	uint8_t ret = 0x0;  
-	enable_cursor(0, 15);
-	update_cursor(5, 5);
 	for (;;){
+		terminal_updateCursor();
+
 		uint8_t currentret = k_readInput();
 		
 		if (currentret != ret){ 
 				const char keyPressed = k_getChar(keys, ports);
 				if (currentret == PORT_ENTER){
-					printfc('\n');
+					//printfg("Command not found  ", VGA_COLOR_RED);
+ 					
+					if (line[0]=='l' && line[1]=='s'){
+						printfg("\nDownloads  Documents  Videos  Screenshots  this.c is.cpp not.o real.asm\n", VGA_COLOR_LIGHT_BLUE);	
+					} else if(line[0]=='c' && line[1]=='l' && line[2] == 'e' && line[3] == 'a' && line[4] == 'r'){
+						terminal_initialize();
+						vim=0;
+					}  else if(line[0]=='n' && line[1] == 'i' && line[2] == 'm'){
+						terminal_initialize();
+						printfg("Welcome to NIM ! ", VGA_COLOR_LIGHT_BLUE);	
+						vim=1;
+					}  
+					terminal_writeName();
+				 
+					for (size_t i = 0;i < 80; i++){
+						line[i]=' ';
+					}
+					lineI=0;
+							
  
 				} else if (currentret == PORT_SPACE){
 					printfc(' ');	
@@ -154,22 +180,28 @@ void k_initialize(){
 					terminal_putentryat(' ', VGA_COLOR_BLACK, terminal_column-1, terminal_row);
 					terminal_column--;
 			 
-
-				} else if(currentret == PORT_LEFT) {
-					terminal_column--;
- 				} else if(currentret == PORT_RIGHT) {
-					terminal_column++;
- 				} else if(currentret == PORT_UP) {
-					terminal_row--;
- 				} else if(currentret == PORT_DOWN) {
-					terminal_row++;
- 				} 
- 				
-				else if (keyPressed != '}') {  	 
+				} else if (keyPressed != '}') {  	 
+					line[lineI] = keyPressed;
+					lineI++;
 					printfc(  keyPressed  );
 				}
-				terminal_updateCursor();
-					
+				
+				
+ 				if (vim){
+					if(currentret == PORT_LEFT) {
+						terminal_column--;
+					} else if(currentret == PORT_RIGHT) {
+						terminal_column++;
+					} else if(currentret == PORT_UP) {   // VIM STYLE
+						terminal_row--;
+					} else if(currentret == PORT_DOWN) {
+						terminal_row++;
+					} 
+				}
+		 
+ 			 
+ 
+ 					
 			}
 			ret = currentret;
 		}

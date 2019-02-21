@@ -121,6 +121,7 @@ void terminal_putchar(char c) {
 	
 	if (++terminal_column == VGA_WIDTH || c == '\n') {
 		terminal_column = 0;
+		
 		if (++terminal_row >= VGA_HEIGHT) {
 			terminal_scrolldown();
 			terminal_row--;
@@ -145,5 +146,13 @@ void terminal_writestring(const char* data, int delayTime, enum vga_color fg, en
 	terminal_color = old_terminal_color;
 
 }
+
+void terminal_writeName(){
+	printfg("\nanon@anon:", VGA_COLOR_GREEN);
+	printfg(":", VGA_COLOR_WHITE);
+	printfg("~", VGA_COLOR_LIGHT_BLUE);
+	printfg("$ ", VGA_COLOR_WHITE);
+}
+
 
  

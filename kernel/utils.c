@@ -45,3 +45,4 @@ int getIndex(char data,  uint8_t arr[]){
 	return -1;
 }
  
+   
