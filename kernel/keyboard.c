@@ -15,7 +15,6 @@ Onboard Keyboard Controller
  * */
  
  
- 
 static enum PORT {
 	PORT_A = 0x10,
 	PORT_B = 0x30,
@@ -109,16 +108,33 @@ typedef struct Key{
 	uint8_t port;
 } Key;
 
-
-static uint8_t k_readInput(){
+ 
+static uint8_t k_readPort(){
 	return inportb(0x60);
 }
- 
+
+static bool k_newPort(){
+	 static uint8_t currentPressedPort = 0x00;
+	 static uint8_t lastPressedPort = 0x00;
+	 
+	 lastPressedPort = currentPressedPort;
+	 currentPressedPort = k_readPort();
+	 
+	 if (lastPressedPort != currentPressedPort){
+		return true;
+	 }	
+	 return false;
+	
+}
+static bool k_portExist(uint8_t ports[]){
+	if (getIndex(k_readPort(), ports) == -1) {
+		return false;
+	}
+	return true;
+
+}
 static char k_getChar(Key keys[], uint8_t  ports[]) {
-	 int ind = getIndex(k_readInput(), ports);
-	 if (ind == -1) {
-		 return '}'; // <---- a changer PEUT ETRE  
-	 }
+	 size_t ind = getIndex(k_readPort(), ports); 
 	 return keys[ind].name;
 } 
 
@@ -134,80 +150,36 @@ void k_initialize(){
 		keys[i].name = names[i];
 		keys[i].port = ports[i];
 	}
+	for (;;) {
+		if (k_newPort() == true && k_portExist(ports)){
+			printfc(k_getChar(keys, ports));
+		}
+	}
 	
-	printfg("Keyboard initialized\n", VGA_COLOR_GREEN);
-	printfg("\nanon@anon:", VGA_COLOR_GREEN);
-	printfg(":", VGA_COLOR_WHITE);
-	printfg("~", VGA_COLOR_LIGHT_BLUE);
-	printfg("$ ", VGA_COLOR_WHITE);
 	
-	
-	char line[80] = {'a'};
-	size_t lineI = 0;
-	int vim = 0;
-	uint8_t ret = 0x0;  
-	for (;;){
+ 
+ 
+	/*
+	terminal_output_prompt();
+	terminal_updateCursor();
+ 	
+ 	uint8_t ret = 0x0;  
+	while (true){
 		terminal_updateCursor();
-
+		
 		uint8_t currentret = k_readInput();
 		
 		if (currentret != ret){ 
 				const char keyPressed = k_getChar(keys, ports);
-				if (currentret == PORT_ENTER){
-					//printfg("Command not found  ", VGA_COLOR_RED);
- 					
-					if (line[0]=='l' && line[1]=='s'){
-						printfg("\nDownloads  Documents  Videos  Screenshots  this.c is.cpp not.o real.asm\n", VGA_COLOR_LIGHT_BLUE);	
-					} else if(line[0]=='c' && line[1]=='l' && line[2] == 'e' && line[3] == 'a' && line[4] == 'r'){
-						terminal_initialize();
-						vim=0;
-					}  else if(line[0]=='n' && line[1] == 'i' && line[2] == 'm'){
-						terminal_initialize();
-						printfg("Welcome to NIM ! ", VGA_COLOR_LIGHT_BLUE);	
-						vim=1;
-					}  
-					terminal_writeName();
-				 
-					for (size_t i = 0;i < 80; i++){
-						line[i]=' ';
-					}
-					lineI=0;
-							
- 
-				} else if (currentret == PORT_SPACE){
-					printfc(' ');	
-				} else if (currentret == PORT_BACKSPACE) {
-					terminal_putentryat(' ', VGA_COLOR_BLACK, terminal_column-1, terminal_row);
-					terminal_column--;
-			 
-				} else if (keyPressed != '}') {  	 
-					line[lineI] = keyPressed;
+			    if (keyPressed != '}') {  	 
+					currentLine[lineI] = keyPressed;
 					lineI++;
 					printfc(  keyPressed  );
-				}
-				
-				
- 				if (vim){
-					if(currentret == PORT_LEFT) {
-						terminal_column--;
-					} else if(currentret == PORT_RIGHT) {
-						terminal_column++;
-					} else if(currentret == PORT_UP) {   // VIM STYLE
-						terminal_row--;
-					} else if(currentret == PORT_DOWN) {
-						terminal_row++;
-					} 
-				}
-		 
- 			 
- 
- 					
+				}	
 			}
-			ret = currentret;
-		}
- 
-		 
- 	}
+				ret = currentret;
+		} */		 
+}
 	
     
  

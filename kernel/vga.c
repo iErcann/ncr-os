@@ -144,14 +144,25 @@ void terminal_writestring(const char* data, int delayTime, enum vga_color fg, en
 	terminal_color = vga_entry_color(fg, bg);
 	terminal_write(data, strlen(data), delayTime);
 	terminal_color = old_terminal_color;
-
 }
 
-void terminal_writeName(){
-	printfg("\nanon@anon:", VGA_COLOR_GREEN);
-	printfg(":", VGA_COLOR_WHITE);
-	printfg("~", VGA_COLOR_LIGHT_BLUE);
-	printfg("$ ", VGA_COLOR_WHITE);
+void terminal_writestring_at(const char* data, int delayTime, enum vga_color fg, enum vga_color bg, size_t x, size_t y) {
+	terminal_column=x;
+	terminal_row=y;
+	
+	uint8_t old_terminal_color = terminal_color;
+	terminal_color = vga_entry_color(fg, bg);
+	terminal_write(data, strlen(data), delayTime);
+	terminal_color = old_terminal_color;
+}
+void terminal_output_prompt(){
+ 
+	
+	terminal_writestring("Keyboard initialized\n", 0, VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+	terminal_writestring("\nanon@anon:", 0, VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+	terminal_writestring(":", 0, VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	terminal_writestring("~", 0, VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+	terminal_writestring("$ ", 0, VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 }
 
 
