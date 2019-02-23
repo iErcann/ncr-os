@@ -60,36 +60,31 @@ void kernel_main(void) {
 	 	terminal_writestring(buf[i], 0, VGA_COLOR_LIGHT_GREY, VGA_COLOR_DARK_GREY);	
 	}   
 	
- 	int offsetX = 0;
-	for (;;) {
-		terminal_initialize();
-		
-		size_t WIDTH = 30;
-		size_t HEIGHT = 15;
-		
-		for (size_t x = 0; x < WIDTH; x++){
-			terminal_writestring_at(" ", 0, VGA_COLOR_WHITE, VGA_COLOR_LIGHT_BLUE, x+offsetX, 0);
-			terminal_writestring_at(" ", 0, VGA_COLOR_WHITE, VGA_COLOR_LIGHT_BLUE,  x+offsetX, HEIGHT);
-		}
-		for (size_t y = 0; y < HEIGHT; y++){
-			terminal_writestring_at(" ", 0, VGA_COLOR_WHITE, VGA_COLOR_LIGHT_BLUE, 0+offsetX, y);
-			terminal_writestring_at(" ", 0, VGA_COLOR_WHITE, VGA_COLOR_LIGHT_BLUE, WIDTH+offsetX, y);
-		}
-		
-		terminal_writestring_at("Basic Window", 0, VGA_COLOR_WHITE, VGA_COLOR_LIGHT_BLUE, 0+offsetX, 0);
-		terminal_writestring_at("x", 0, VGA_COLOR_RED, VGA_COLOR_LIGHT_BLUE, WIDTH+offsetX, 0);
-		
-		terminal_writestring_at("Hey. This is a window", 0, VGA_COLOR_WHITE, VGA_COLOR_DARK_GREY, 1+offsetX, 1);
-		terminal_writestring_at("Or is it ?", 0, VGA_COLOR_WHITE, VGA_COLOR_DARK_GREY, 1+offsetX, 2);
-		terminal_writestring_at("I don't know.", 0, VGA_COLOR_WHITE, VGA_COLOR_DARK_GREY, 1+offsetX, 3);
-
-		offsetX++;
+ 
+	k_initialize(); 
+	terminal_initialize();
 		delay(10000);
-
-}	
-	  k_initialize(); 
- 
- 
+for (int i = 1; i < 6; i++) {
+	size_t w= 40;
+	size_t h= i*5;
+	int offsetX = (rand()%10)*8;
+	int offsetY = (rand()%10);
+	
+	for (size_t x=0;x<w;x++){
+		terminal_writestring_at(" ", 0,  VGA_COLOR_LIGHT_BLUE,   VGA_COLOR_LIGHT_BLUE, offsetX+x, offsetY+0);	
+		for (size_t y=1;y<h;y++){
+			terminal_writestring_at(" ", 0,   VGA_COLOR_WHITE,  VGA_COLOR_BLACK, offsetX+x, offsetY+y);	
+		}
+	}
+	terminal_writestring_at("anon@anon:", 255,  VGA_COLOR_BLUE,   VGA_COLOR_LIGHT_BLUE, offsetX+0, offsetY+0);	
+	terminal_column=offsetX;
+	terminal_row=offsetY+1;
+	terminal_output_prompt();
+	delay(233);
+}
+	while (1){
+		k_printKeyAt(terminal_column, terminal_row);
+ 	}
  
  
 }

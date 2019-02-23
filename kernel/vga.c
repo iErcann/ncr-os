@@ -63,14 +63,14 @@ void terminal_initialize(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_LIGHT_GREY);
 	terminal_buffer = (uint16_t*) 0xB8000;
 	enable_cursor(0, 15);
 	
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = vga_entry(' ', terminal_color);
+			terminal_buffer[index] = vga_entry('.',terminal_color);
 		}
 	}
 }
@@ -107,12 +107,15 @@ void terminal_scrolleft() {
 }
 
  
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
+void terminal_putentryat(char c, uint8_t fgcolor, size_t x, size_t y) 
 {
 	update_cursor(x+1, y);
 	const size_t index = y * VGA_WIDTH + x;
-	terminal_buffer[index] = vga_entry(c, color);
+	terminal_buffer[index] = vga_entry(c, fgcolor);
+	
+	
 }
+ 
 
  	
 void terminal_putchar(char c) {
@@ -156,10 +159,7 @@ void terminal_writestring_at(const char* data, int delayTime, enum vga_color fg,
 	terminal_color = old_terminal_color;
 }
 void terminal_output_prompt(){
- 
-	
-	terminal_writestring("Keyboard initialized\n", 0, VGA_COLOR_GREEN, VGA_COLOR_BLACK);
-	terminal_writestring("\nanon@anon:", 0, VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+	terminal_writestring("anon@anon:", 0, VGA_COLOR_GREEN, VGA_COLOR_BLACK);
 	terminal_writestring(":", 0, VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	terminal_writestring("~", 0, VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
 	terminal_writestring("$ ", 0, VGA_COLOR_WHITE, VGA_COLOR_BLACK);

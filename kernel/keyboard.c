@@ -104,7 +104,7 @@ static enum PORT {
  
  
 typedef struct Key{
-	char name;
+	char *name;
 	uint8_t port;
 } Key;
 
@@ -133,32 +133,34 @@ static bool k_portExist(uint8_t ports[]){
 	return true;
 
 }
-static char k_getChar(Key keys[], uint8_t  ports[]) {
+static char *k_getChar(Key keys[], uint8_t  ports[]) {
 	 size_t ind = getIndex(k_readPort(), ports); 
 	 return keys[ind].name;
 } 
 
+Key keys[26]; // Global variable. 
+uint8_t ports[] = {PORT_A,  PORT_B, PORT_C,  PORT_D,  PORT_E,  PORT_F,  PORT_G,  PORT_H,  PORT_I,  PORT_J,  PORT_K,  PORT_L,  PORT_M,  PORT_N,  PORT_O,  PORT_P,  PORT_Q,  PORT_R,  PORT_S,  PORT_T,  PORT_U,  PORT_V,  PORT_W,  PORT_X,  PORT_Y,  PORT_Z};
+
+void k_printKeyAt(size_t x, size_t y){
+	if (k_newPort() == true && k_portExist(ports)){
+			terminal_writestring_at(k_getChar(keys, ports), 10, VGA_COLOR_WHITE, VGA_COLOR_BLACK, x, y);
+	}
+}
+    
  
 void k_initialize(){
-	Key keys[26];
 	printf("Keyboard Initialization..\n");
 	
-	char names[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-	uint8_t ports[] = {PORT_A,  PORT_B, PORT_C,  PORT_D,  PORT_E,  PORT_F,  PORT_G,  PORT_H,  PORT_I,  PORT_J,  PORT_K,  PORT_L,  PORT_M,  PORT_N,  PORT_O,  PORT_P,  PORT_Q,  PORT_R,  PORT_S,  PORT_T,  PORT_U,  PORT_V,  PORT_W,  PORT_X,  PORT_Y,  PORT_Z};
+	char *names[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+	//uint8_t ports[] = {PORT_A,  PORT_B, PORT_C,  PORT_D,  PORT_E,  PORT_F,  PORT_G,  PORT_H,  PORT_I,  PORT_J,  PORT_K,  PORT_L,  PORT_M,  PORT_N,  PORT_O,  PORT_P,  PORT_Q,  PORT_R,  PORT_S,  PORT_T,  PORT_U,  PORT_V,  PORT_W,  PORT_X,  PORT_Y,  PORT_Z};
 
 	for (size_t i = 0; i < 26; i++){
 		keys[i].name = names[i];
 		keys[i].port = ports[i];
 	}
-	for (;;) {
-		if (k_newPort() == true && k_portExist(ports)){
-			printfc(k_getChar(keys, ports));
-		}
-	}
+ 
 	
 	
- 
- 
 	/*
 	terminal_output_prompt();
 	terminal_updateCursor();
@@ -180,8 +182,7 @@ void k_initialize(){
 				ret = currentret;
 		} */		 
 }
-	
-    
+
  
 
  
